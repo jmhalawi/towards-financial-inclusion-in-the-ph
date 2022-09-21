@@ -96,9 +96,9 @@ class Pages:
         # Plot the data
         fig, ax = plt.subplots(figsize=(9,5), dpi=350)
         plot = sns.barplot(
-            df['percentage_reasons'],
-            df['r_labels']
-#            color='#C0C0C0'
+            x = df['percentage_reasons'],
+            y = df['r_labels'],
+            color='#C0C0C0'
         )
         plt.title("Top 5 Reasons Why Filipinos aged 21 and above are Unbanked")
         ax.set_xlabel("% of Population")
@@ -149,9 +149,9 @@ class Demographics:
             fig, ax = plt.subplots(figsize=(8.5,4), dpi=200)
             
             plot = sns.barplot(
-                ph_no_account['educ'],
-                ph_no_account['no_accounts']
- #               color='#C0C0C0'
+                x = ph_no_account['educ'],
+                y = ph_no_account['no_accounts'],
+                color='#C0C0C0'
             )
             plot.bar([1], [322], color='#378078')
 
