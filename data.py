@@ -41,4 +41,4 @@ def get_reason(data, new_col, col_name ):
     data[new_col] = data.apply(
         lambda x: 1 if x[col_name] == 1 else 0, axis=1
     )
-
+    

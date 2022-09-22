@@ -10,12 +10,15 @@ df = data.ProcessData.load_data()
 # Filter Philippine data
 ph_data = data.ProcessData.filter_data(df)
 
+# Create new data frame with filtered no_accounts column
+ph_no_account = ph_data[ph_data['no_accounts'] != 0]
+
 class Pages:
     # Page 1 - Introduction
     def introduction():
     # Write the title and the subheader
         st.title(
-            "Insert Title"
+            "Project MabuhAI: An In-Depth ..."
         )
         st.subheader(
             """
@@ -34,13 +37,11 @@ class Pages:
         st.dataframe(ph_data.reset_index())
         st.markdown("Source: Global Findex 2017 from World Bank.")
 
-
-    
     # Page 2 - [DEMOGRAPHICS?]
     def demog():
         # Write the title
         st.title(
-            "Insert Title - Demographics"
+            "Some demographics of the Philippines"
         )
         # Load photo -> Update photo relevant to our topic
         st.image("image1.jpg")
@@ -48,9 +49,17 @@ class Pages:
         # Show Gender
         # Show Employment
 
-        # Show Educational Attainment
-        st.markdown("In terms of educational attainment:")
+        # Show in terms of educational attainment
+        st.subheader("In terms of Educational Attainment:")
         Demographics.show_educ()
+
+        # Show in terms of employment status
+        st.subheader("In terms of Employemnt Status:")
+        Demographics.show_emp()
+
+        # Show in terms of gender
+        st.subheader("In terms of Gender:")
+        Demographics.show_gender()
 
     # Page 3 - Show Factors Why Filipinos are Unbanked
     def show_factors():
@@ -58,6 +67,9 @@ class Pages:
         st.title(
             "Factors why Filipinos are Unbanked"
         )
+
+        # Subheader
+        st.subheader("228 out of 571 has no need for financial services")
 
         # Get the reasons why Filipinos are Unbanked
         r_ph_data = ph_data[
@@ -100,22 +112,19 @@ class Pages:
             y = df['r_labels'],
             color='#C0C0C0'
         )
-        plt.title("Top 5 Reasons Why Filipinos aged 21 and above are Unbanked")
+        #plt.title("Top 5 Reasons Why Filipinos aged 21 and above are Unbanked")
         ax.set_xlabel("% of Population")
         ax.set_ylabel("Reasons")
         plt.bar_label(plot.containers[0], fmt='%.2f')
         plt.xlim(0, 80)
 
         # Plot the special bar separately
-        plot.barh([0], [71.63], color='#378078')
-        plot.barh([1], [56.40], color='#378078')
-        plot.barh([2], [46.41], color='#378078')
-        plot.barh([3], [43.78], color='#378078')
         plot.barh([4], [39.93], color='#378078')
 
         # Show the data
         st.pyplot(fig)
 
+        st.markdown("571 out of 872 adult Filipino respondents had no bank account")
 
     def recommendations():
         # Write the title
@@ -123,19 +132,21 @@ class Pages:
             "What We Can Do"
         )
     
+    # Page <insert No.>
     def the_team():
         # Write the title
         st.title(
             "The Team"
         )
 
+        st.image("teamwork.jpg", caption='Meet the Team behind Project MabuhAI.')
+
 # Demographics Class
 class Demographics:
         def show_educ():
             ### EDUCATIONAL ATTAINMENT ###
-            # Clean the data
-            ph_no_account = ph_data[ph_data['no_accounts'] != 0]
-            ph_no_account = ph_no_account.groupby('educ')['no_accounts'].count().reset_index()
+            # Filter the data by educ
+            ph_educ_no_acc = ph_no_account.groupby('educ')['no_accounts'].count().reset_index()
 
             educ_mapping = {
                 1: 'Primary or Less',
@@ -143,14 +154,14 @@ class Demographics:
                 3: 'Tertiary'
             }
 
-            ph_no_account = ph_no_account.replace({'educ': educ_mapping})
+            ph_educ_no_acc = ph_educ_no_acc.replace({'educ': educ_mapping})
 
             # Plot the data
             fig, ax = plt.subplots(figsize=(8.5,4), dpi=200)
             
             plot = sns.barplot(
-                x = ph_no_account['educ'],
-                y = ph_no_account['no_accounts'],
+                x = ph_educ_no_acc['educ'],
+                y = ph_educ_no_acc['no_accounts'],
                 color='#C0C0C0'
             )
             plot.bar([1], [322], color='#378078')
@@ -166,9 +177,61 @@ class Demographics:
             st.pyplot(fig)
         
         def show_gender():
-            # Insert Code Here
-            return ('Page under construction.')
+            ### GENDER DISTRIBUTION ###
+            # Filter the data by female
+            ph_gen_no_acc = ph_no_account.groupby('female')['no_accounts'].count().reset_index()
+
+            gen_mapping = {
+                1: 'Male',
+                2: 'Female'
+            }
+
+            ph_gen_no_acc = ph_gen_no_acc.replace({'female': gen_mapping})
+
+            # Plot the data
+            fig, ax = plt.subplots(figsize=(8.5,4), dpi=200)
+
+            plot = sns.barplot(
+                x = ph_gen_no_acc['female'],
+                y = ph_gen_no_acc['no_accounts'],
+                color='#378078'
+            )
+
+            plt.title('Gender Distribuion of Unbanked Filipinos aged 21 and above')
+            plt.xlabel('Gender')
+            plt.ylabel('No. of Filipinos with no Accounts')
+            plt.bar_label(plot.containers[0], fmt='%.2f')
+            plt.ylim(0, 350)
+
+            st.pyplot(fig)
         
         def show_emp():
-            # Insert code here
-            return ('Page under construction.')
+            ### EMPLOYMENT STATUS ###
+            # Filter the data by emp_in
+            ph_emp_no_acc = ph_no_account.groupby('emp_in')['no_accounts'].count().reset_index()
+
+            emp_mapping = {
+                0: 'Employed',
+                1: 'Unemployed'
+            }
+
+            ph_emp_no_acc = ph_emp_no_acc.replace({'emp_in': emp_mapping})
+
+            # Plot the data
+            fig, ax = plt.subplots(figsize=(8.5,4), dpi=200)
+
+            plot = sns.barplot(
+                x = ph_emp_no_acc['emp_in'],
+                y = ph_emp_no_acc['no_accounts'],
+                color='#C0C0C0'
+            )
+            plot.bar([1], [382], color='#378078')
+
+            plt.title('Majority of Unbanked Filipinos aged 21 and above are Unemployed')
+            plt.xlabel('Employment Status')
+            plt.ylabel('No. of Filipinos with no Accounts')
+            plt.bar_label(plot.containers[0], fmt='%.2f')
+            plt.ylim(0, 450)
+
+            # Show the data
+            st.pyplot(fig)
