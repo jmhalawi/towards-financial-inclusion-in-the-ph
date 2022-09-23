@@ -18,24 +18,31 @@ class Pages:
     def introduction():
     # Write the title and the subheader
         st.title(
-            "Project MabuhAI: An In-Depth ..."
+            "Project MabuhAI: Uncovering the Different Factors that Make up Unbanked Filipinos"
         )
         st.subheader(
             """
-            Insert Subheader
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Eget nulla facilisi etiam dignissim diam quis enim lobortis. Volutpat diam ut venenatis tellus in metus. Dolor sit amet consectetur adipiscing elit pellentesque habitant morbi tristique. Purus faucibus ornare suspendisse sed nisi lacus sed. Volutpat lacus laoreet non curabitur. Libero enim sed faucibus turpis in eu. Ante metus dictum at tempor. Accumsan sit amet nulla facilisi morbi. Augue neque gravida in fermentum et sollicitudin ac.
-            
-            Elit sed vulputate mi sit amet mauris commodo quis imperdiet. Mauris sit amet massa vitae tortor condimentum lacinia quis vel. Dapibus ultrices in iaculis nunc sed. Nibh tortor id aliquet lectus proin nibh. Mollis nunc sed id semper risus in hendrerit gravida rutrum. Fames ac turpis egestas sed tempus. In hac habitasse platea dictumst vestibulum rhoncus. Commodo quis imperdiet massa tincidunt.
+            Out of 872 adult Filipinos, 65.48% were found unbanked. Among the low-income SEA countries, PH had the 5th highest percentage population of unbanked adults.
             """
         )
 
         # Load photo -> Update photo relevant to our topic
-        st.image("image1.jpg")
+        st.image("sea_countries.png")
+        st.markdown(""" 
+        *In a global scale, the average percentage population of unbanked adults was 41.64%. Going beyond the benchmark, it could only mean that Philippines' banks and other formal financial institutions were not yet quite accessible in 2017.*
+        """)
+
+        # Objectives
+        st.subheader("Our main objective is to create a profile of unbanked filipino adults across their income, employment, received domestic remittances, and status of having emergency funds.")
+        st.subheader("Additionally, we want to look at the main reasons why Filipinos are unbanked and how they manage their money (borrowing, emergency funds).")
 
         # Display data
-        st.markdown("**Philippine Data**")
-        st.dataframe(ph_data.reset_index())
-        st.markdown("Source: Global Findex 2017 from World Bank.")
+        #st.markdown("**A Look at the Philippine Data**")
+        #st.dataframe(ph_data.reset_index(drop=True))
+        #st.markdown("Source: Global Findex 2017 from World Bank.")
+        expander = st.expander("A Look at the Philippine Data")
+        expander.dataframe(ph_data.reset_index(drop=True))
+        expander.write("Source: Global Findex 2017 from World Bank")
 
     # Page 2 - [DEMOGRAPHICS?]
     def demog():
