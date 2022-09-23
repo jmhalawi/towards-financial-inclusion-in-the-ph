@@ -13,6 +13,9 @@ ph_data = data.ProcessData.filter_data(df)
 # Create new data frame with filtered no_accounts column
 ph_no_account = ph_data[ph_data['no_accounts'] != 0]
 
+# Setting general format to the graphs
+sns.set_theme(style="white", font="sans-serif")
+
 class Pages:
     # Page 1 - Introduction
     def introduction():
@@ -50,23 +53,31 @@ class Pages:
         st.title(
             "Some demographics of the Philippines"
         )
-        # Load photo -> Update photo relevant to our topic
-        st.image("image1.jpg")
 
-        # Show Gender
-        # Show Employment
+        tab_educ, tab_emp, tab_sex = st.tabs(["Education", "Employment", "Sex"])
+       
+        with tab_educ:
+            # Show in terms of educational attainment
+            st.subheader("In terms of Educational Attainment")
+            st.markdown("""
+            ##### Among the unbanked Filipinos aged 21 and above, around 56% had finished only up to second level or high school.
+            """)
+            Demographics.show_educ()
+            st.text("TEST")
+            st.image("educational_attainment.png")
 
-        # Show in terms of educational attainment
-        st.subheader("In terms of Educational Attainment:")
-        Demographics.show_educ()
+        with tab_emp:
+            # Show in terms of employment status
+            st.subheader("In terms of Employment Status")
+            st.markdown("""
+            ##### 4 out of 6 unbanked adult Filipinos are unemployed.
+            """)
+            Demographics.show_emp()
 
-        # Show in terms of employment status
-        st.subheader("In terms of Employemnt Status:")
-        Demographics.show_emp()
-
-        # Show in terms of gender
-        st.subheader("In terms of Gender:")
-        Demographics.show_gender()
+        with tab_sex:
+            # Show in terms of gender
+            st.subheader("In terms of Gender")
+            Demographics.show_gender()
 
     # Page 3 - Show Factors Why Filipinos are Unbanked
     def show_factors():
@@ -176,7 +187,7 @@ class Demographics:
             plt.title('Educational Attainment of Unbanked Filipinos aged 21 and above')
             ax.set_xlabel('Educational Attainment')
             ax.set_ylabel('No. of Filipinos with no Accounts')
-            plt.bar_label(plot.containers[0], fmt='%.2f')
+            plt.bar_label(plot.containers[0], fmt='%.0f')
             #plt.xticks(rotation=45)
             plt.ylim(0, 400)
 
@@ -194,6 +205,7 @@ class Demographics:
             }
 
             ph_gen_no_acc = ph_gen_no_acc.replace({'female': gen_mapping})
+            ph_gen_no_acc = ph_gen_no_acc.sort_values(by='no_accounts', ascending=False)
 
             # Plot the data
             fig, ax = plt.subplots(figsize=(8.5,4), dpi=200)
@@ -207,7 +219,7 @@ class Demographics:
             plt.title('Gender Distribuion of Unbanked Filipinos aged 21 and above')
             plt.xlabel('Gender')
             plt.ylabel('No. of Filipinos with no Accounts')
-            plt.bar_label(plot.containers[0], fmt='%.2f')
+            plt.bar_label(plot.containers[0], fmt='%.0f')
             plt.ylim(0, 350)
 
             st.pyplot(fig)
@@ -237,7 +249,7 @@ class Demographics:
             plt.title('Majority of Unbanked Filipinos aged 21 and above are Unemployed')
             plt.xlabel('Employment Status')
             plt.ylabel('No. of Filipinos with no Accounts')
-            plt.bar_label(plot.containers[0], fmt='%.2f')
+            plt.bar_label(plot.containers[0], fmt='%.0f')
             plt.ylim(0, 450)
 
             # Show the data
