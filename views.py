@@ -95,11 +95,11 @@ class Pages:
         # Show profile for those who said there is no ned for FS
         st.subheader("So why is there no need for a bank account?")
         st.markdown("""
-        ##### With some clustering, we saw that those who did not need to have a bank account were _employed_. and the _Middle_ and _Richest_ income groups could come up with emergency funds when something unexpected happens.
+        ##### With K-modes clustering, we saw that those who did not need to have a bank account were _employed_. and the _Middle_ and _Richest_ income groups could come up with emergency funds when something unexpected happens.
         """)
         st.image("profile_noneedfs.PNG")
         st.markdown("""
-        ##### Moreover, as members of the middle income category were _receiving domestic remittances_ so they deemed financial services to be unnecessary.
+        ##### Moreover, members of the middle income category were _receiving domestic remittances_ Thus, financial services were deemed unnecessary.
         """)
 
         st.subheader("Looking at the bigger picture")
