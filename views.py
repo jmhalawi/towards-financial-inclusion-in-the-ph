@@ -83,7 +83,6 @@ class Pages:
 
     # Page 3 - Factors 
     def show_factors_and_profile():
-        # Write the title
         st.title(
             "Factors why Filipinos are Unbanked"
         )
