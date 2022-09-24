@@ -28,7 +28,7 @@ class Pages:
         )
         st.subheader(
             """
-            Out of 872 adult Filipinos, 65.48% were found unbanked. Among the low-income SEA countries, PH had the 5th highest percentage population of unbanked adults.
+            Out of 872 adult Filipinos, 65.48% were found unbanked. Moreover, PH had the 5th highest percentage population of unbanked adults among the low-income SEA countries.
             """
         )
 
@@ -94,13 +94,13 @@ class Pages:
         st.subheader("Why are Filipinos unbanked?")
         Factors_and_Profile.show_factors()        
         st.markdown("""
-        ##### Understanding the unbank status of Filipinos, top factors appeared to be the one's financial capacity, lack of documentation, and distance from banks. Interestingly, 39.93% of the unbanked respondents did not find bank financial services a need. We'll into those who said they have no need for financial services.
+        ##### Understanding the unbank status of Filipinos, top factors appeared to be the one's financial capacity, lack of documentation, and distance from banks. Interestingly, 39.93% of the unbanked respondents did not find bank financial services a need. We will dive deeper into those who said they have no need for financial services.
         """)
 
         # Show profile for those who said there is no ned for FS
         st.subheader("So why is there no need for a bank account?")
         st.markdown("""
-        ##### With some clustering, we saw that those who did not need to have a bank account were _employed_, and the _Middle_ and _Richest_ income groups could come up with emergency funds when something unexpected happens.
+        ##### With K-Modes clustering, we saw that those who did not need to have a bank account were _employed_, and the _Middle_ and _Richest_ income groups could come up with emergency funds when something unexpected happens.
         """)
         st.image("profile_noneedfs.PNG")
         st.markdown("""
