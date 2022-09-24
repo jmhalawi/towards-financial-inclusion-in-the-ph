@@ -36,6 +36,12 @@ class ProcessData:
 
         return philippine_data
 
+    # Filter those who doesn't need financial services
+    def no_need_for_fs(data):
+        data_no_fs = data[data['fin11h'] == 1]
+
+        return data_no_fs
+
 # This method adds a new column to the dataframe for each reason
 def get_reason(data, new_col, col_name ):
     data[new_col] = data.apply(

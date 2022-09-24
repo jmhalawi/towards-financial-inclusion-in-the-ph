@@ -13,6 +13,9 @@ ph_data = data.ProcessData.filter_data(df)
 # Create new data frame with filtered no_accounts column
 ph_no_account = ph_data[ph_data['no_accounts'] != 0]
 
+# Filter those who do neet financial services
+ph_no_acc_no_needFS = data.ProcessData.no_need_for_fs(ph_no_account)
+
 # Setting general format to the graphs
 sns.set_theme(style="white", font="sans-serif")
 
@@ -90,16 +93,18 @@ class Pages:
         # Show the different factors
         st.subheader("Why are Filipinos unbanked?")
         Factors_and_Profile.show_factors()        
-        st.markdown("228 out of 571 said they have no need for financial services.")
+        st.markdown("""
+        ##### Understanding the unbank status of Filipinos, top factors appeared to be the one's financial capacity, lack of documentation, and distance from banks. Interestingly, 39.93% of the unbanked respondents did not find bank financial services a need. We'll into those who said they have no need for financial services.
+        """)
 
         # Show profile for those who said there is no ned for FS
         st.subheader("So why is there no need for a bank account?")
         st.markdown("""
-        ##### With some clustering, we saw that those who did not need to have a bank account were _employed_. and the _Middle_ and _Richest_ income groups could come up with emergency funds when something unexpected happens.
+        ##### With some clustering, we saw that those who did not need to have a bank account were _employed_, and the _Middle_ and _Richest_ income groups could come up with emergency funds when something unexpected happens.
         """)
         st.image("profile_noneedfs.PNG")
         st.markdown("""
-        ##### Moreover, as members of the middle income category were _receiving domestic remittances_ so they deemed financial services to be unnecessary.
+        ##### Moreover, members of the middle income category were _receiving domestic remittances_. Thus, bank services were deemed unnecessary.
         """)
 
         st.subheader("Looking at the bigger picture")
@@ -112,14 +117,20 @@ class Pages:
         # Saving Capacity
         with tab1:
             st.markdown("""
-            ##### 28% said that in the past 12 months they were saving up for retirement.
+            ##### For the last 12 months, 64 out of 228 respondents said they were saving up for retirement.
+
+            ##### In this analysis, we looked into the different reasons our respondents took into consideration in terms of saving money.
+
+            ##### Note that these are the same people who said they do not need financial services.
             """)
-        
+            Factors_and_Profile.show_save_capacity()
+            
         # Borrowing Power
         with tab2:
             st.markdown("""
             ##### Some 106 people who were borrowing money said they do not need financial services.
             """)
+            Factors_and_Profile.show_borrow_power()
         
         # Emergency Funds
         with tab3:
@@ -240,6 +251,7 @@ class Demographics:
 
 # Factors and Profiling
 class Factors_and_Profile:
+    
     def show_factors():
         # Get the reasons why Filipinos are Unbanked
         r_ph_data = ph_data[
@@ -289,6 +301,138 @@ class Factors_and_Profile:
 
         # Plot the special bar separately
         plot.barh([4], [39.93], color='#378078')
+
+        # Show the data
+        st.pyplot(fig)
+    
+    def show_save_capacity():
+        # Use a list to store columns for each saving reason
+        list = ['fin15', 'fin16', 'fin17a', 'fin17b']
+
+        # Use another list for proper naming convention each saving reason
+        saving_reason = ['for_farm_business_purpose',
+                        'for_old_age',
+                        'using_an_account_at_a_financial_institution',
+                        'using_an_informal_savings_club']
+        
+        # Create a loop to count respondents who said 'yes' and
+        # create a new column for each reason based on the list created above
+        for i in list:
+            ph_no_acc_no_needFS[saving_reason[list.index(i)]] = ph_no_acc_no_needFS.apply(
+                lambda x : 1 if x[i] == 1 else 0, axis=1
+            )
+        
+        # Aggregate
+        ph_no_acc_no_needFS.agg(
+            business = ('for_farm_business_purpose', 'sum'),
+            retirement = ('for_old_age','count'),
+            used_at_a_financial_institution = ('using_an_account_at_a_financial_institution', 'sum'),
+            informal_savings_club = ('using_an_informal_savings_club', 'sum'),
+            population = ('wpid_random', 'count')
+        )
+
+        # Calculate % each reason
+        business = round(ph_no_acc_no_needFS['for_farm_business_purpose'].sum() * 100.0 / ph_no_acc_no_needFS['wpid_random'].count(), 2)
+        retirement = round(ph_no_acc_no_needFS['for_old_age'].sum() * 100.0 / ph_no_acc_no_needFS['wpid_random'].count(), 2)
+        used_at_fi = round(ph_no_acc_no_needFS['using_an_account_at_a_financial_institution'].sum() * 100.0 / ph_no_acc_no_needFS['wpid_random'].count(), 2)
+        informal_savings = round(ph_no_acc_no_needFS['using_an_informal_savings_club'].sum() * 100.0 / ph_no_acc_no_needFS['wpid_random'].count(), 2)
+
+        # Store aggregated columns to a new DataFrame
+        df = {'saving_reason' : ['Business Purposes', 'Retirement', 'Used in Financial Institution', 'Informal Savings Club'],
+            'value' : [business, retirement, used_at_fi, informal_savings]}
+
+        reasons = pd.DataFrame(df)
+
+        # Sort values
+        reasons = reasons.sort_values('value', ascending = False)
+
+        # Plot the data
+        fig, ax = plt.subplots(figsize=(12,8), dpi=275)
+        plot = sns.barplot(
+            x = reasons['value'],
+            y = reasons['saving_reason'],
+            color='#C0C0C0'
+        )
+        plot.barh([0], [28.07], color='#378078')
+        plot.barh([1], [25.44], color='#C0C0C0')
+        plot.barh([2], [7.46], color='#C0C0C0')
+        plot.barh([3], [2.19], color='#C0C0C0')
+
+        ax.set_xlabel("Saving Capacity % per Reason", labelpad=10.0)
+        ax.set_ylabel("")
+        plt.bar_label(plot.containers[0], fmt='%.2f', padding=7.0)
+        plt.xlim(0, 30)
+
+        # Show the data
+        st.pyplot(fig)
+    
+    def show_borrow_power():
+
+        # Filter for Filipinos who borrowed
+        ph_no_acc_no_needFS['borrowed'] = ph_no_acc_no_needFS.apply(
+            lambda x: 1 if x['fin22a'] == 1 or x['fin22b'] == 1 or x['fin22c'] == 1 else 0, axis = 1
+        )
+
+        # Filter for Filipinos who borrowed and have no bank account
+        ph_no_acc_no_needFS['borrowed_no_bank'] = ph_no_acc_no_needFS.apply(
+            lambda x: 1 if x['borrowed'] == 1 & x['no_accounts'] == 1 else 0, axis = 1
+        )
+
+        # Filter for Filipinos who borrowed, have no bank account, and have no need for Financial Services
+        
+        #ph_no_acc_no_needFS['borrowed_no_bank_no_need'] = ph_no_acc_no_needFS.apply(
+        #    lambda x: 1 if x['borrowed_no_bank'] == 1 & x['does_not_have_an_account_bc_no_need_for_financial_services'] == 1 else 0, axis = 1
+        #)
+
+        #Filter for where Filipinos borrow
+        ph_no_acc_no_needFS['borrowed_from_fi'] = ph_no_acc_no_needFS.apply(
+            lambda x: 1 if x['borrowed_no_bank_no_need'] == 1 & x['fin22a'] == 1 else 0, axis = 1
+        )
+        ph_no_acc_no_needFS['borrowed_from_family'] = ph_no_acc_no_needFS.apply(
+            lambda x: 1 if x['borrowed_no_bank_no_need'] == 1 & x['fin22b'] == 1 else 0, axis = 1
+        )
+        ph_no_acc_no_needFS['borrowed_from_informal'] = ph_no_acc_no_needFS.apply(
+            lambda x: 1 if x['borrowed_no_bank_no_need'] == 1 and x['fin22c'] == 1 else 0, axis = 1
+        )
+
+        # Get borrowed from data only
+        borrowed_from = ph_no_acc_no_needFS[
+            [
+                'borrowed_from_fi',
+                'borrowed_from_family',
+                'borrowed_from_informal'
+            ]
+        ]
+
+        # Total population that borrowed per where they borrowed from
+        borrowed_from_sum = borrowed_from.sum()
+
+        # Assigning labels
+        borrowed_from_df = pd.DataFrame({
+            'Borrowed From' : ['Financial Instituion', 'Family or Friends', 'Informal Savings Club'],
+            'Number' : borrowed_from_sum
+        })
+
+        # Sorted values
+        borrowed_from_df_sorted = borrowed_from_df.sort_values(by="Number", ascending=False)
+
+        # Plot the data
+        fig, ax = plt.subplots(figsize=(6, 3), dpi=200)
+        plot = sns.barplot(
+            borrowed_from_df_sorted["Number"],
+            borrowed_from_df_sorted["Borrowed From"],
+            color='#C0C0C0'
+        )
+
+        ax.set_xlabel("Population", labelpad=10.0)
+        ax.set_ylabel(" ")
+        plt.bar_label(plot.containers[0], fmt='%.2f', padding=7.0)
+        plt.xlim(0, 110)
+
+
+        # Plot the special bar separately ...
+        plot.barh([0], [98], color='#378078')
+
 
         # Show the data
         st.pyplot(fig)
