@@ -47,7 +47,7 @@ class Pages:
         expander.dataframe(ph_data.reset_index(drop=True))
         expander.write("Source: Global Findex 2017 from World Bank")
 
-    # Page 2 - [DEMOGRAPHICS?]
+    # Page 2 - Demographics
     def demog():
         # Write the title
         st.title(
@@ -61,7 +61,7 @@ class Pages:
             # Show in terms of educational attainment
             st.subheader("In terms of Educational Attainment")
             st.markdown("""
-            ##### Among the unbanked Filipinos aged 21 and above, around 56% had finished only up to second level or high school.
+            ##### Among the unbanked Filipinos aged 21 and above, around 56% have finished up to secondary level or high school only.
             """)
             Demographics.show_educ()
 
@@ -69,7 +69,7 @@ class Pages:
             # Show in terms of employment status
             st.subheader("In terms of Employment Status")
             st.markdown("""
-            ##### 4 out of 6 unbanked adult Filipinos are unemployed. Being in the workforce is a factor for financial inclusion.
+            ##### 4 out of 6 unbanked adult Filipinos are unemployed.
             """)
             Demographics.show_emp()
 
@@ -81,70 +81,52 @@ class Pages:
             """)
             Demographics.show_gender()
 
-    # Page 3 - Show Factors Why Filipinos are Unbanked
-    def show_factors():
+    # Page 3 - Factors 
+    def show_factors_and_profile():
         # Write the title
         st.title(
             "Factors why Filipinos are Unbanked"
         )
 
-        # Subheader
-        st.subheader("228 out of 571 has no need for financial services")
+        # Show the different factors
+        st.subheader("Why are Filipinos unbanked?")
+        Factors_and_Profile.show_factors()        
+        st.markdown("228 out of 571 said they have no need for financial services.")
 
-        # Get the reasons why Filipinos are Unbanked
-        r_ph_data = ph_data[
-            [
-                'r_too_far',
-                'r_too_expensive',
-                'r_lack_documentation',
-                'r_trust',
-                'r_religious_reasons',
-                'r_lack_of_money',
-                'r_family_already_have',
-                'r_no_need_for_fs'
-            ]
-        ]
+        # Show profile for those who said there is no ned for FS
+        st.subheader("So why is there no need for a bank account?")
+        st.markdown("""
+        ##### With some clustering, we saw that those who did not need to have a bank account were _employed_. and the _Middle_ and _Richest_ income groups could come up with emergency funds when something unexpected happens.
+        """)
+        st.image("profile_noneedfs.png")
+        st.markdown("""
+        ##### Moreover, as members of the middle income category were _receiving domestic remittances_ so they deemed financial services to be unnecessary.
+        """)
+
+        st.subheader("Looking at the bigger picture")
+        st.markdown("""
+        ##### Here we look at some aspects of the unbanked adult Filipinos in terms of their capacity to save and borrow, as well as their source fo emergency funds.
+        """)
+
+        tab1, tab2, tab3 = st.tabs(["Saving Capacity", "Borrowing Power", "Emergency Funds"])
+
+        # Saving Capacity
+        with tab1:
+            st.markdown("""
+            ##### 28% said that in the past 12 months they were saving up for retirement.
+            """)
         
-        r_labels = [
-            'Too Far',
-            'Too Expensive',
-            'Lack of Documentation',
-            'Lack of Trust',
-            'Religious Regions',
-            'Lack of Money',
-            'Family Member Already Has Account',
-            'No Need For Financial Services'
-        ]
-
-        # Get total for each reason
-        sum_per_reason = r_ph_data.sum()
-        sum_no_accounts = ph_data['no_accounts'].sum()
-        percentage_reasons = (sum_per_reason*100)/sum_no_accounts
-
-        # Assign label to percent value
-        df = pd.DataFrame({"percentage_reasons":percentage_reasons, "r_labels":r_labels})
-        df = df.sort_values('percentage_reasons', ascending=False).reset_index()
-
-        # Plot the data
-        fig, ax = plt.subplots(figsize=(9,5), dpi=350)
-        plot = sns.barplot(
-            x = df['percentage_reasons'],
-            y = df['r_labels'],
-            color='#C0C0C0'
-        )
-        #plt.title("Top 5 Reasons Why Filipinos aged 21 and above are Unbanked")
-        ax.set_xlabel("% of Population")
-        ax.set_ylabel("Reasons")
-        plt.bar_label(plot.containers[0], fmt='%.2f')
-        plt.xlim(0, 80)
-
-        # Plot the special bar separately
-        plot.barh([4], [39.93], color='#378078')
-
-        # Show the data
-        st.pyplot(fig)
-
-        st.markdown("571 out of 872 adult Filipino respondents had no bank account")
+        # Borrowing Power
+        with tab2:
+            st.markdown("""
+            ##### Some 106 people who were borrowing money said they do not need financial services.
+            """)
+        
+        # Emergency Funds
+        with tab3:
+            st.markdown("""
+            ##### Majority who did not need financial services had emergency funds from work or from family orfriends.
+            """)
 
     def recommendations():
         # Write the title
@@ -161,7 +143,7 @@ class Pages:
 
         st.image("teamwork.jpg", caption='Meet the Team behind Project MabuhAI.')
 
-# Demographics Class
+# Demographics
 class Demographics:
         def show_educ():
             ### EDUCATIONAL ATTAINMENT ###
@@ -256,3 +238,58 @@ class Demographics:
 
             # Show the data
             st.pyplot(fig)
+
+# Factors and Profiling
+class Factors_and_Profile:
+    def show_factors():
+        # Get the reasons why Filipinos are Unbanked
+        r_ph_data = ph_data[
+            [
+                'r_too_far',
+                'r_too_expensive',
+                'r_lack_documentation',
+                'r_trust',
+                'r_religious_reasons',
+                'r_lack_of_money',
+                'r_family_already_have',
+                'r_no_need_for_fs'
+            ]
+        ]
+        
+        r_labels = [
+            'Too Far',
+            'Too Expensive',
+            'Lack of Documentation',
+            'Lack of Trust',
+            'Religious Regions',
+            'Lack of Money',
+            'Family Member Already Has Account',
+            'No Need For Financial Services'
+        ]
+
+        # Get total for each reason
+        sum_per_reason = r_ph_data.sum()
+        sum_no_accounts = ph_data['no_accounts'].sum()
+        percentage_reasons = (sum_per_reason*100)/sum_no_accounts
+
+        # Assign label to percent value
+        df = pd.DataFrame({"percentage_reasons":percentage_reasons, "r_labels":r_labels})
+        df = df.sort_values('percentage_reasons', ascending=False).reset_index()
+
+        # Plot the data
+        fig, ax = plt.subplots(figsize=(10,7), dpi=450)
+        plot = sns.barplot(
+            x = df['percentage_reasons'],
+            y = df['r_labels'],
+            color='#C0C0C0'
+        )
+        ax.set_xlabel("% of Population", labelpad=10.0)
+        ax.set_ylabel("Reasons", labelpad=10.0)
+        plt.bar_label(plot.containers[0], fmt='%.2f', padding=7.0)
+        plt.xlim(0, 80)
+
+        # Plot the special bar separately
+        plot.barh([4], [39.93], color='#378078')
+
+        # Show the data
+        st.pyplot(fig)

@@ -7,7 +7,7 @@ from views import Pages
 list_of_pages = [
     "About Project MabuhAI",
     "Demographics",
-    "Factors why Filipinos are Unbanked",
+    "Factors and Profiling",
     "The Team"
 ]
 
@@ -21,8 +21,8 @@ if selection == "About Project MabuhAI":
 elif selection == "Demographics":
     Pages.demog()
 
-elif selection == "Factors why Filipinos are Unbanked":
-    Pages.show_factors()
+elif selection == "Factors and Profiling":
+    Pages.show_factors_and_profile()
 
 elif selection == "The Team":
     Pages.the_team()
