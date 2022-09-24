@@ -124,7 +124,7 @@ class Pages:
         # Emergency Funds
         with tab3:
             st.markdown("""
-            ##### Majority who did not need financial services had emergency funds from work or from family orfriends.
+            ##### Majority who did not need financial services had emergency funds from work or from family or friends.
             """)
 
     def recommendations():
